@@ -281,11 +281,11 @@ describe('setup resize layout', () => {
     expect(setupBrandFrame(120, 41)).toMatchObject({ height: 8, top: COMPACT_LOCKUP_TOP_PADDING })
   })
 
-  it('retains the exact six-row wordmark when widening from 87 to 88 columns at height 37', () => {
-    expect(setupBrandFrame(87, 37).height).toBe(6)
-    expect(setupBrandFrame(88, 37).height).toBe(8)
-    const before = brandRows(87, 37).filter(Boolean)
-    const after = brandRows(88, 37).filter(Boolean)
+  it('retains the exact six-row wordmark when widening from 88 to 89 columns at height 37', () => {
+    expect(setupBrandFrame(88, 37).height).toBe(6)
+    expect(setupBrandFrame(89, 37).height).toBe(8)
+    const before = brandRows(88, 37).filter(Boolean)
+    const after = brandRows(89, 37).filter(Boolean)
     expect(before).toHaveLength(6)
     expect(after).toEqual(before)
   })
