@@ -104,7 +104,7 @@ describe('setup resize layout', () => {
         const providerRow = lines.findIndex((line) => line.includes('Providers'))
         const panelAnsi = rawFrame.split('\n').slice(providerRow).join('\n')
         expect(panelAnsi).toContain('\u001b[38;2;')
-        expect(panelAnsi).not.toContain('\u001b[48;2;')
+        expect(panelAnsi).toContain('\u001b[48;2;')
         expect(panelAnsi).not.toContain('\u001b[48;5;')
         if (columns === 140) {
           expect(frame).toContain('Model options')
