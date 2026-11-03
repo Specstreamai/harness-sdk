@@ -158,8 +158,7 @@ function SetupWizardContent({
   deferred = false,
   onComplete,
   onCancel,
-  onExit,
-  escapeHint = 'Esc to exit',
+  escapeHint = 'Esc to open chat',
   introStartedAt,
   initialSettings,
   checkForUpdate = availableCliUpdate,
@@ -170,8 +169,6 @@ function SetupWizardContent({
   deferred?: boolean
   onComplete(change?: SetupChange): void
   onCancel?(exitCode: 0 | 130): void
-  /** Leaves setup and the CLI from the opening menu when there is no harness to return to. */
-  onExit?(): void
   /** Names where Esc leads from the opening menu. */
   escapeHint?: string
   /** When set, the brand plays the launch spiral intro from this timestamp. */
@@ -1744,8 +1741,7 @@ function SetupWizardContent({
     }
     if (step <= 1) {
       if (step === 0) {
-        if (onExit) onExit()
-        else onCancel?.(0)
+        onCancel?.(0)
         return
       }
       panelTransition.transition(() => {
