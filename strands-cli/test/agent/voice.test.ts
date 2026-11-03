@@ -21,11 +21,12 @@ describe('PythonVoiceSession', () => {
     })
     session.subscribe(() => statuses.push(session.getSnapshot().status))
 
+    expect(session.narrate('Voice is not enabled yet.')).toBe(false)
     await session.start()
     expect(session.getSnapshot()).toMatchObject({
       status: 'listening',
       muted: false,
-      spokenReplies: false,
+      spokenReplies: true,
       endpointingSensitivity: 'LOW',
       provider: 'bedrock',
       voice: 'tiffany',
@@ -43,7 +44,6 @@ describe('PythonVoiceSession', () => {
     await vi.waitFor(() => expect(session.getSnapshot().status).toBe('muted'))
     expect(session.getSnapshot()).toMatchObject({ inputLevel: 0, inputLevelDb: -60 })
 
-    expect(session.setSpokenReplies(true)).toBe(true)
     expect(session.narrate('Finished the task.')).toBe(true)
 
     expect(session.setSpokenReplies(false)).toBe(true)
@@ -62,6 +62,11 @@ describe('PythonVoiceSession', () => {
       voice: 'tiffany',
       model: 'test-sonic',
     })
+
+    await session.start()
+    expect(session.getSnapshot().spokenReplies).toBe(false)
+    expect(session.narrate('Spoken replies are still disabled.')).toBe(false)
+    await session.stop()
   })
 
   it('forwards grounded narrations and restarts when endpointing or voice changes', async () => {
@@ -75,7 +80,6 @@ describe('PythonVoiceSession', () => {
     session.subscribe(() => statuses.push(session.getSnapshot().status))
 
     await session.start()
-    expect(session.setSpokenReplies(true)).toBe(true)
     expect(session.narrate('The first completed response.')).toBe(true)
     expect(session.narrate('The second completed response.')).toBe(true)
     await vi.waitFor(() => expect(statuses.filter((status) => status === 'speaking')).toHaveLength(2))
@@ -85,18 +89,19 @@ describe('PythonVoiceSession', () => {
     await vi.waitFor(() => expect(session.getSnapshot().status).toBe('speaking'))
     session.setSpokenReplies(false)
     await vi.waitFor(() => expect(session.getSnapshot().status).toBe('listening'))
-    session.setSpokenReplies(true)
 
     expect(await session.setEndpointingSensitivity('MEDIUM')).toBe(true)
     expect(session.getSnapshot()).toMatchObject({
       status: 'listening',
       endpointingSensitivity: 'MEDIUM',
+      spokenReplies: false,
     })
 
     expect(await session.setVoice('matthew')).toBe(true)
     expect(session.getSnapshot()).toMatchObject({
       status: 'listening',
       voice: 'matthew',
+      spokenReplies: false,
     })
 
     expect(await session.setProvider('openai')).toBe(true)
@@ -104,6 +109,7 @@ describe('PythonVoiceSession', () => {
       status: 'listening',
       provider: 'openai',
       voice: 'coral',
+      spokenReplies: false,
     })
 
     await session.dispose()

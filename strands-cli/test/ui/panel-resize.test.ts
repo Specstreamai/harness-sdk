@@ -265,6 +265,10 @@ describe('mounted panel resizing', () => {
 
     await view.press('\u001b[F')
     expect(view.screen()).toContain('German')
+    await view.click(view.point('lennart'))
+    expect(activate).toHaveBeenLastCalledWith(expect.objectContaining({ value: 'voice:voice=lennart' }))
+    await view.click(view.point('greta'))
+    expect(activate).toHaveBeenLastCalledWith(expect.objectContaining({ value: 'voice:voice=greta' }))
     await view.resize(40, 14)
     await vi.waitFor(() => {
       view.fits()

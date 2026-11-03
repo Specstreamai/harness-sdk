@@ -151,7 +151,7 @@ export class PythonVoiceSession implements VoiceInput {
     muted: false,
     inputLevel: 0,
     inputLevelDb: -60,
-    spokenReplies: false,
+    spokenReplies: true,
     endpointingSensitivity: 'LOW',
     provider: 'bedrock',
     voice: 'tiffany',

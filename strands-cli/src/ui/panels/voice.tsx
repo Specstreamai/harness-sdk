@@ -83,7 +83,7 @@ function VoiceSection({
         ? outlined
           ? 4
           : 2
-        : provider && outlined
+        : row.control?.kind === 'segmented' && outlined
           ? 3
           : stackedToggle
             ? 2
@@ -179,9 +179,15 @@ function VoiceControlRow({
   const labelWidth = !label ? 0 : stacked ? width : Math.min(narrow && !toggle ? 6 : 16, Math.max(1, width - 9))
   const controlWidth = stacked ? width : Math.max(1, width - labelWidth)
   const labelElement = label ? (
-    <Box width={labelWidth} height={1} flexShrink={0} overflow="hidden">
+    <Box
+      width={labelWidth}
+      height={1}
+      flexShrink={0}
+      justifyContent={endpointing ? 'center' : 'flex-start'}
+      overflow="hidden"
+    >
       <Text color={highlighted ? theme.accent : theme.foreground} bold={focused} wrap="truncate-end">
-        {focused ? '› ' : '  '}
+        {focused ? '› ' : endpointing ? '' : '  '}
         {label}
       </Text>
     </Box>
@@ -192,7 +198,8 @@ function VoiceControlRow({
         control={row.control}
         rowIndex={index}
         width={controlWidth}
-        outlined={outlined && (provider || endpointing)}
+        outlined={outlined}
+        centered={endpointing}
         {...(pressedControl ? { pressedControl } : {})}
         {...(hoveredControl ? { hoveredControl } : {})}
         {...(onControlElement ? { onControlElement } : {})}
@@ -272,6 +279,7 @@ function VoiceOptions({
   rowIndex,
   width,
   outlined,
+  centered,
   pressedControl,
   hoveredControl,
   onControlElement,
@@ -280,6 +288,7 @@ function VoiceOptions({
   rowIndex: number
   width: number
   outlined: boolean
+  centered: boolean
 }): ReactElement {
   const { accent, foreground, border } = useTheme()
   const padding = outlined && width >= 33 ? 1 : 0
@@ -299,7 +308,14 @@ function VoiceOptions({
     )
   }
   return (
-    <Box width={width} height={outlined ? 3 : 1} flexShrink={0} alignItems="center" overflow="hidden">
+    <Box
+      width={width}
+      height={outlined ? 3 : 1}
+      flexShrink={0}
+      justifyContent={centered ? 'center' : 'flex-start'}
+      alignItems="center"
+      overflow="hidden"
+    >
       {start > 0 ? marker(start - 1, '‹') : null}
       {control.options.slice(start, end).map((option, visibleIndex) => {
         const target = panelControlTarget(rowIndex, option.value)
@@ -320,7 +336,7 @@ function VoiceOptions({
             overflow="hidden"
           >
             <Text color={highlighted ? accent : foreground} bold={Boolean(highlighted)} wrap="truncate-end">
-              {outlined ? option.label : `[${option.label}]`}
+              {option.label}
             </Text>
           </Box>
         )

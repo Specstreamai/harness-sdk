@@ -3068,7 +3068,20 @@ describe('ChatView', () => {
         expect(output).not.toContain('current')
         expect(output).toMatch(/Fast.*Balanced.*Patient/u)
         expect(output).toContain('Provider')
+        expect(output).toContain('│ tiffany │')
+        expect(output).toContain('│ matthew │')
+        const lines = output.split('\n')
+        const turnLabel = lines.find((line) => line.includes('End of turn'))!
+        const panelLeft = turnLabel.indexOf('│')
+        const panelRight = turnLabel.indexOf('│', panelLeft + 1)
+        const panelCenter = (panelLeft + panelRight) / 2
+        const labelCenter = turnLabel.indexOf('End of turn') + ('End of turn'.length - 1) / 2
+        const choices = lines.find((line) => /Fast.*Balanced.*Patient/u.test(line))!
+        const choicesCenter = (choices.indexOf('Fast') + choices.indexOf('Patient') + 'Patient'.length - 1) / 2
+        expect(Math.abs(labelCenter - panelCenter)).toBeLessThanOrEqual(1)
+        expect(Math.abs(choicesCenter - panelCenter)).toBeLessThanOrEqual(1)
       }
+      expect(output).not.toContain('[tiffany]')
       expect(output).not.toContain('Viewing Voice')
       expect(output.split('\n').every((line) => stringWidth(line) <= width)).toBe(true)
     }
